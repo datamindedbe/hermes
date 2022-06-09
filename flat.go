@@ -436,13 +436,17 @@ func (dt *Flat) HTMLTemplate() string {
                       {{ end }}
 
                     {{ end }}
-                    {{ with .Email.Body.Outros }} 
+					{{ if (ne .Email.Body.OutrosMarkdown "") }}
+                      {{ .Email.Body.OutrosMarkdown.ToHTML }}
+                    {{ else }}
+                      {{ with .Email.Body.Outros }}
                         {{ if gt (len .) 0 }}
                           {{ range $line := . }}
                             <p>{{ $line }}</p>
                           {{ end }}
                         {{ end }}
                       {{ end }}
+                    {{ end }}
 
                     <p>
                       {{.Email.Body.Signature}},

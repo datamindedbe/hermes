@@ -266,11 +266,11 @@ func (ed *WithInviteCode) getExample() (Hermes, Email) {
 
 	email := Email{
 		Body{
-			Name:      "Jon Snow",
+			Name: "Jon Snow",
 			Actions: []Action{
 				{
 					Instructions: "Here is your invite code:",
-					InviteCode: "123456",
+					InviteCode:   "123456",
 				},
 			},
 		},
@@ -424,6 +424,12 @@ func TestThemeWithInviteCode(t *testing.T) {
 	}
 }
 
+func TestThemeHtmlOutroMarkdownExample(t *testing.T) {
+	for _, theme := range testedThemes {
+		checkExample(t, &HtmlOutroMarkdownExample{theme})
+	}
+}
+
 func checkExample(t *testing.T, ex Example) {
 	// Given an example
 	h, email := ex.getExample()
@@ -513,4 +519,35 @@ func TestHermes_Default(t *testing.T) {
 	assert.Equal(t, email.Body.Greeting, "Hi")
 	assert.Equal(t, email.Body.Signature, "Yours truly")
 	assert.Empty(t, email.Body.Title)
+}
+
+type HtmlOutroMarkdownExample struct {
+	theme Theme
+}
+
+func (ed *HtmlOutroMarkdownExample) assertHTMLContent(t *testing.T, r string) {
+	// Assert on email body
+	assert.Contains(t, r, "This is the markdown outro", "Name: Should container the markdown outro")
+	assert.NotContains(t, r, "this is a plain outro", "Intro: Should not contain the plain outro")
+}
+
+func (ed *HtmlOutroMarkdownExample) assertPlainTextContent(t *testing.T, r string) {
+
+}
+
+func (ed *HtmlOutroMarkdownExample) getExample() (Hermes, Email) {
+	h := Hermes{
+		Theme:   ed.theme,
+		Product: Product{},
+	}
+
+	email := Email{
+		Body{
+			OutrosMarkdown: Markdown("This is the markdown outro"),
+			Outros: []string{
+				"this is a plain outro",
+			},
+		},
+	}
+	return h, email
 }
