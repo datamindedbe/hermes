@@ -552,9 +552,13 @@ func (dt *Default) PlainTextTemplate() string {
     {{ end }}
   {{ end }}
 {{ end }}
-{{ with .Email.Body.Outros }} 
-  {{ range $line := . }}
-    <p>{{ $line }}<p>
+{{ if (ne .Email.Body.OutrosMarkdown "") }}
+  {{ .Email.Body.OutrosMarkdown.ToHTML }}
+{{ else }}
+  {{ with .Email.Body.Outros }} 
+    {{ range $line := . }}
+	  <p>{{ $line }}<p>
+    {{ end }}
   {{ end }}
 {{ end }}
 <p>{{.Email.Body.Signature}},<br>{{.Hermes.Product.Name}} - {{.Hermes.Product.Link}}</p>
